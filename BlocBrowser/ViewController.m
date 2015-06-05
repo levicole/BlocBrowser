@@ -33,7 +33,7 @@
     self.textField.keyboardType = UIKeyboardTypeURL;
     self.textField.returnKeyType = UIReturnKeyDone;
     self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.textField.placeholder = NSLocalizedString(@"Website URL", @"Placeholder text for web browser URL field");
+    self.textField.placeholder = NSLocalizedString(@"Enter a URL or Search", @"Placeholder text for web browser URL field");
     self.textField.backgroundColor = [UIColor colorWithWhite:220/255.0f alpha:1];
     self.textField.delegate = self;
     
@@ -109,6 +109,17 @@
     NSString *URLString = textField.text;
     
     NSURL *URL = [NSURL URLWithString:URLString];
+    NSString *space = @" ";
+    NSRange spaceRange = [URLString rangeOfString:space];
+    
+    NSMutableString *queryString = [URLString mutableCopy];
+    if(spaceRange.location != NSNotFound) {
+        while (spaceRange.location != NSNotFound) {
+            [queryString replaceCharactersInRange:spaceRange withString:@"+"];
+            spaceRange = [queryString rangeOfString:space];
+        }
+        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q=%@", queryString]];
+    }
     
     if (!URL.scheme) {
         URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
