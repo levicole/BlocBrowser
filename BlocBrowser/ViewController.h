@@ -10,6 +10,10 @@
 
 @interface ViewController : UIViewController
 
+/**
+ Resets the webview with a fresh on, erasing all history. Also updates the url field and tool buttons appropriately.
+ **/
+- (void) resetWebView;
 
 @end
 
