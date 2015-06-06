@@ -14,6 +14,7 @@
 @optional
 
 - (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWith:(NSString *)title;
+- (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
 
 @end
 
