@@ -15,6 +15,7 @@
 
 - (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWith:(NSString *)title;
 - (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
+- (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithScale:(CGFloat)scale;
 
 @end
 
@@ -23,4 +24,7 @@
 - (void)setEnabled:(BOOL)enabled forButtonWithTitle:(NSString *)title;
 
 @property(nonatomic, weak) id <AwesomeFloatingToolBarDelegate> delegate;
+@property (nonatomic, assign) CGPoint origin;
+@property (nonatomic, assign) CGFloat width;
+@property (nonatomic, assign) CGFloat height;
 @end

@@ -22,6 +22,7 @@
 @property (nonatomic, strong) AwesomeFloatingToolbar *awesomeToolbar;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, assign) NSUInteger frameCount;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
 
 @end
 
@@ -43,7 +44,9 @@
     self.textField.delegate = self;
     
     self.awesomeToolbar = [[AwesomeFloatingToolbar alloc] initWithFourTitles:@[kWebBrowserBackString, kWebBrowserForwardString, kWebBrowserStopString, kWebBrowserRefreshString]];
+    
     self.awesomeToolbar.delegate = self;
+    self.awesomeToolbar.origin   = CGPointMake(10, 10);
     
     for(UIView *viewToAdd in @[self.webView, self.textField, self.awesomeToolbar]) {
         [mainView addSubview:viewToAdd];
@@ -59,11 +62,12 @@
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicator];
     // Do any additional setup after loading the view, typically from a nib.
+    self.awesomeToolbar.frame = CGRectMake(self.awesomeToolbar.origin.x, self.awesomeToolbar.origin.y, self.awesomeToolbar.width, self.awesomeToolbar.height);
 }
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    
+
     static const CGFloat itemHeight = 50;
     CGFloat width = CGRectGetWidth(self.view.bounds);
     CGFloat browserHeight = CGRectGetHeight(self.view.bounds) - itemHeight;
@@ -71,7 +75,6 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    self.awesomeToolbar.frame = CGRectMake(width - 280, browserHeight - 10, 280, 60);
 }
 
 #pragma mark - UITextFieldDelegate
@@ -121,6 +124,21 @@
 }
 
 #pragma mark - AwesomeFloatingToolbarDelegate
+
+- (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithScale:(CGFloat)scale {
+    CGFloat newHeight =  CGRectGetHeight(toolbar.bounds) * scale;
+    CGFloat newWidth =  CGRectGetWidth(toolbar.bounds) * scale;
+    CGPoint origin = toolbar.frame.origin;
+    CGRect newFrame = CGRectMake(origin.x, origin.y, newWidth, newHeight);
+    toolbar.width = newWidth;
+    toolbar.height = newHeight;
+    if (CGRectContainsRect(self.view.bounds, newFrame) && newHeight > 15 && newWidth > 70) {
+        toolbar.frame = newFrame;
+    }
+//    NSLog(@"Origin: %@ Scale: %f New Rect: %@", NSStringFromCGPoint(origin), scale, NSStringFromCGRect(newFrame));
+//    toolbar.transform = CGAffineTransformScale(toolbar.transform, scale, scale);
+}
+
 
 - (void) floatingToolBar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWith:(NSString *)title {
     if ([title isEqualToString:kWebBrowserBackString]) {
